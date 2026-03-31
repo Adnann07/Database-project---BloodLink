@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bloodlink-app
+    container_name: bloodlink-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - bloodlink
+
+  db:
+    image: mysql:8.0
+    container_name: bloodlink-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: bloodlink
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # <--- ADD THIS LINE
+      MYSQL_ROOT_PASSWORD: ""
+    ports:
+      - "3306:3306"
+    networks:
+      - bloodlink
+
+  nginx:
+    image: nginx:alpine
+    container_name: bloodlink-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - bloodlink
+
+networks:
+  bloodlink:
+    driver: bridge
