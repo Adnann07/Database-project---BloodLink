@@ -37,10 +37,17 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Hospital Dashboard routes
     Route::prefix('hospital')->group(function () {
-        Route::get('/dashboard', [HospitalDashboardController::class, 'index']);
-        Route::get('/profile', [HospitalDashboardController::class, 'profile']);
-        Route::put('/profile', [HospitalDashboardController::class, 'updateProfile']);
-        Route::post('/blood-request', [HospitalDashboardController::class, 'storeBloodRequest']);
+        Route::get('/dashboard', [\App\Http\Controllers\HospitalDashboardController::class, 'index']);
+        Route::get('/profile', [\App\Http\Controllers\HospitalDashboardController::class, 'profile']);
+        Route::put('/profile', [\App\Http\Controllers\HospitalDashboardController::class, 'updateProfile']);
+        Route::post('/blood-request', [\App\Http\Controllers\HospitalDashboardController::class, 'storeBloodRequest']);
+    });
+
+    // Super Admin routes
+    Route::prefix('superadmin')->group(function () {
+        Route::get('/pending', [\App\Http\Controllers\SuperAdminController::class, 'pendingAdmins']);
+        Route::post('/approve/{id}', [\App\Http\Controllers\SuperAdminController::class, 'approveAdmin']);
+        Route::post('/reject/{id}', [\App\Http\Controllers\SuperAdminController::class, 'rejectAdmin']);
     });
 });
 

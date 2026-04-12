@@ -13,7 +13,7 @@ CREATE TABLE users (
     name            VARCHAR(100) NOT NULL,
     email           VARCHAR(150) NOT NULL UNIQUE,
     password        VARCHAR(255) NOT NULL,
-    role            ENUM('admin', 'donor', 'hospital') NOT NULL,
+    role            ENUM('super_admin', 'admin', 'donor', 'hospital') NOT NULL,
     phone           VARCHAR(20),
     address         TEXT,
     remember_token  VARCHAR(100),
@@ -21,6 +21,31 @@ CREATE TABLE users (
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Super Admins (highest authority)
+
+CREATE TABLE super_admins (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT NOT NULL UNIQUE,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Admin Profiles (for verification of admins)
+
+CREATE TABLE admin_profiles (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT NOT NULL UNIQUE,
+    status          ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    verified_by     INT,
+    verified_at     TIMESTAMP NULL,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
+);
 
 --  Donor profile
 

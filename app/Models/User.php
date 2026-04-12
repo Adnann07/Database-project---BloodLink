@@ -105,4 +105,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Volunteer::class);
     }
+
+    public function adminProfile()
+    {
+        return $this->hasOne(AdminProfile::class);
+    }
+
+    public function superAdmin()
+    {
+        return $this->hasOne(SuperAdmin::class);
+    }
 }

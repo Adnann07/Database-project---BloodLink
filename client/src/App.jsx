@@ -6,6 +6,7 @@ import AskAI from './pages/AskAI'
 import DonorDashboard from './pages/DonorDashboard'
 import HospitalDashboard from './pages/HospitalDashboard'
 import Contact from './pages/Contact'
+import SuperAdminDashboard from './pages/SuperAdminDashboard'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/dashboard" element={<DonorDashboard />} />
         <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
+        <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
       </Routes>
     </BrowserRouter>
   )

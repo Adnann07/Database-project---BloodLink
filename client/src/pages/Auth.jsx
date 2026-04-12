@@ -82,12 +82,17 @@ function Auth() {
         localStorage.setItem('pending_verification_email', regData.email)
         // Navigate to verification page
         navigate('/verify-email')
+      } else if (res.data.is_admin_pending) {
+        setTab('login')
+        setLoginError('Registration successful! Please wait for Super Admin approval before logging in.')
+        setLoginData({ ...loginData, email: regData.email })
       } else {
         // Direct registration (fallback)
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('user', JSON.stringify(res.data.user))
         const role = res.data.user.role
         if (role === 'admin') navigate('/admin-dashboard')
+        else if (role === 'super_admin') navigate('/super-admin-dashboard')
         else if (role === 'donor') navigate('/dashboard')
         else if (role === 'hospital') navigate('/hospital/dashboard')
       }

@@ -41,6 +41,19 @@ class AuthService
             ]);
         }
 
+        if ($user->role === 'admin') {
+            \App\Models\AdminProfile::create([
+                'user_id' => $user->id,
+                'status'  => 'pending',
+            ]);
+
+            return response()->json([
+                'message' => 'Registration successful! Your account is pending Super Admin verification.',
+                'is_admin_pending' => true,
+                'user'    => $user,
+            ], 201);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -60,13 +73,28 @@ class AuthService
             ], 401);
         }
 
+        if ($user->role === 'admin') {
+            $user->load('adminProfile');
+            if ($user->adminProfile && $user->adminProfile->status !== 'approved') {
+                return response()->json([
+                    'message' => 'Your account is still pending Super Admin verification.',
+                    'is_admin_pending' => true,
+                ], 403);
+            }
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        $redirectUrl = '/dashboard';
+        if ($user->role === 'hospital') $redirectUrl = '/hospital/dashboard';
+        if ($user->role === 'admin') $redirectUrl = '/admin/dashboard';
+        if ($user->role === 'super_admin') $redirectUrl = '/super-admin-dashboard';
 
         return response()->json([
             'message'      => 'Login successful',
             'token'        => $token,
             'user'         => $user,
-            'redirect_url' => $user->role === 'hospital' ? '/hospital/dashboard' : '/dashboard'
+            'redirect_url' => $redirectUrl
         ]);
     }
 
